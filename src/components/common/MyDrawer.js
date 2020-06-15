@@ -19,7 +19,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 
 import { FaPlusCircle, FaShoppingCart, FaBell, FaListUl } from "react-icons/fa";
-import { IoIosLogIn, IoIosPerson, IoIosLogOut } from "react-icons/io";
+import {
+  IoIosLogIn,
+  IoIosPerson,
+  IoIosLogOut,
+  IoMdDocument,
+} from "react-icons/io";
 import { MdUpdate, MdAddCircle, MdDashboard, MdReorder } from "react-icons/md";
 
 const useStyles = makeStyles({
@@ -61,7 +66,7 @@ const MyDrawer = () => {
     return (
       <Grid container item direction="column" style={{ height: "100%" }}>
         <img
-          src="https://res.cloudinary.com/hrishi7/image/upload/v1586783076/medcareLogo.png"
+          src="https://i.ibb.co/9W3zmzV/pdLogo.png"
           alt="Medicare"
           className={classes.logoS}
           onClick={() => (window.location.href = "/")}
@@ -108,7 +113,7 @@ const MyDrawer = () => {
     return (
       <Grid container item direction="column" style={{ height: "100%" }}>
         <img
-          src="https://res.cloudinary.com/hrishi7/image/upload/v1586783076/medcareLogo.png"
+          src="https://i.ibb.co/9W3zmzV/pdLogo.png"
           alt="Medicare"
           className={classes.logoS}
           onClick={() => (window.location.href = "/")}
@@ -131,7 +136,7 @@ const MyDrawer = () => {
                 marginRight: "-10%",
               }}
             >
-              <IoIosLogIn size={25} />
+              <FaPlusCircle size={25} />
             </ListItemIcon>
             <ListItemText primary="Invoice Details" />
           </ListItem>
@@ -146,7 +151,7 @@ const MyDrawer = () => {
                 marginRight: "-10%",
               }}
             >
-              <IoIosLogIn size={25} />
+              <IoMdDocument size={25} />
             </ListItemIcon>
             <ListItemText primary="Daily Usage" />
           </ListItem>
@@ -205,7 +210,7 @@ const MyDrawer = () => {
         </div>
       </Drawer>
       <img
-        src="https://res.cloudinary.com/hrishi7/image/upload/v1586783076/medcareLogo.png"
+        src="https://i.ibb.co/9W3zmzV/pdLogo.png"
         alt="Medicare"
         className={classes.logo}
         onClick={() => (window.location.href = "/")}

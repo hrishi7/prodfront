@@ -28,12 +28,15 @@ import {
 } from "../actions/invoiceDetailsActions";
 
 import "react-datepicker/dist/react-datepicker.css";
+import Loader from "./Loader";
 
 const InvoiceDetails = () => {
   const dispatch = useDispatch();
   let invoiceDetails = useSelector(
     (state) => state.invoiceDetails.invoiceDetails
   );
+  const [loading, setLoading] = useState(false);
+
   const [pageMAxSize, setPageMAxSize] = useState(5);
   const [openForm, setOpenForm] = useState(false);
   const [id, setId] = useState("");
@@ -41,6 +44,7 @@ const InvoiceDetails = () => {
   const [invoiceDate, setInvoiceDate] = useState("");
 
   const [partNo, setPartNo] = useState("");
+  const [slNo, setSlNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [sacCode, setSacCode] = useState("");
   const [qty, setQty] = useState(0);
@@ -62,24 +66,33 @@ const InvoiceDetails = () => {
 
   const handleInsertInvoiceDetails = async () => {
     if (allFieldsAreFilled("save")) {
-      let insertData = {
-        invoiceNo,
-        invoiceDate,
-        partNo,
-        itemDescription,
-        sacCode,
-        qty,
-        price,
-      };
-      /**set data */
-      let response = await axios.post(
-        `${proxy}/api/invoice-details`,
-        insertData
-      );
-      alert("saved!");
-      setOpenForm(false);
-      dispatch(insertInvoiceDetails(response.data));
+      try {
+        let insertData = {
+          invoiceNo,
+          invoiceDate,
+          partNo,
+          slNo,
+          itemDescription,
+          sacCode,
+          qty,
+          price,
+        };
+        /**set data */
+        setLoading(true);
+        let response = await axios.post(
+          `${proxy}/api/invoice-details`,
+          insertData
+        );
+        setLoading(false);
+        alert("saved!");
+        setOpenForm(false);
+        dispatch(insertInvoiceDetails(response.data));
+      } catch (error) {
+        setLoading(false);
+        alert(error.response.data.message);
+      }
     } else {
+      setLoading(false);
       alert("Please Fill All Field");
     }
   };
@@ -90,6 +103,7 @@ const InvoiceDetails = () => {
         invoiceNo == "" ||
         itemDescription == "" ||
         partNo == "" ||
+        slNo == "" ||
         price == 0 ||
         qty == 0 ||
         sacCode == ""
@@ -103,6 +117,7 @@ const InvoiceDetails = () => {
         invoiceNo == "" ||
         itemDescription == "" ||
         partNo == "" ||
+        slNo == "" ||
         price == 0 ||
         qty == 0 ||
         sacCode == ""
@@ -120,6 +135,7 @@ const InvoiceDetails = () => {
     setInvoiceDate(rowData.invoiceDate);
     setItemDescription(rowData.itemDescription);
     setPartNo(rowData.partNo);
+    setSlNo(rowData.slNo);
     setPrice(rowData.price);
     setQty(rowData.qty);
     setSacCode(rowData.sacCode);
@@ -127,35 +143,51 @@ const InvoiceDetails = () => {
 
   const handleUpdateInvoiceDetails = async () => {
     if (allFieldsAreFilled("update")) {
-      let updateData = {
-        invoiceNo,
-        invoiceDate,
-        partNo,
-        itemDescription,
-        sacCode,
-        qty,
-        price,
-      };
-      /**set updated data */
-      let response = await axios.put(
-        `${proxy}/api/invoice-details/${id}`,
-        updateData
-      );
-      alert("Updated!");
-      setOpenForm(false);
-      response = await axios.get(`${proxy}/api/invoice-details`);
-      dispatch(readInvoiceDetails(response.data));
-      // dispatch(updateInvoiceDetails(response.data));
+      try {
+        let updateData = {
+          invoiceNo,
+          invoiceDate,
+          partNo,
+          slNo,
+          itemDescription,
+          sacCode,
+          qty,
+          price,
+        };
+        /**set updated data */
+        setLoading(true);
+        let response = await axios.put(
+          `${proxy}/api/invoice-details/${id}`,
+          updateData
+        );
+        setLoading(false);
+        alert("Updated!");
+        setOpenForm(false);
+        response = await axios.get(`${proxy}/api/invoice-details`);
+        dispatch(readInvoiceDetails(response.data));
+        // dispatch(updateInvoiceDetails(response.data));
+      } catch (error) {
+        setLoading(false);
+        alert(error.response.data.message);
+      }
     } else {
+      setLoading(false);
       alert("Please Fill All Field");
     }
   };
 
   const handleDeleteInvoiceDetails = async (id) => {
-    await axios.delete(`${proxy}/api/invoice-details/${id}`);
-    alert("Deleted!");
-    setOpenForm(false);
-    dispatch(deleteInvoiceDetails(id));
+    try {
+      setLoading(true);
+      await axios.delete(`${proxy}/api/invoice-details/${id}`);
+      alert("Deleted!");
+      setLoading(false);
+      setOpenForm(false);
+      dispatch(deleteInvoiceDetails(id));
+    } catch (error) {
+      setLoading(false);
+      alert(error.response.data.message);
+    }
   };
 
   const renderColumns = () => {
@@ -163,6 +195,7 @@ const InvoiceDetails = () => {
       { title: "Invoice No", field: "invoiceNo" },
       { title: "Invoice Date", field: "invoiceDate" },
       { title: "Part No", field: "partNo" },
+      { title: "Sl No", field: "slNo" },
       { title: "Description", field: "itemDescription" },
       { title: "SAC Code", field: "sacCode" },
       { title: "Qty", field: "qty" },
@@ -178,6 +211,7 @@ const InvoiceDetails = () => {
             invoiceNo: invoiceDetail.invoiceNo,
             invoiceDate: invoiceDetail.invoiceDate,
             partNo: invoiceDetail.partNo,
+            slNo: invoiceDetail.slNo,
             itemDescription: invoiceDetail.itemDescription,
             sacCode: invoiceDetail.sacCode,
             qty: invoiceDetail.qty,
@@ -229,6 +263,7 @@ const InvoiceDetails = () => {
     setId("");
     setItemDescription("");
     setPartNo("");
+    setSlNo("");
     setPrice(0);
     setQty(0);
     setSacCode("");
@@ -259,6 +294,7 @@ const InvoiceDetails = () => {
           Add Details
         </Button>
       </Grid>
+      {loading ? <Loader /> : ""}
       <Dialog
         fullWidth={true}
         maxWidth={"md"}
@@ -282,36 +318,7 @@ const InvoiceDetails = () => {
             onChange={(e) => setInvoiceNo(e.target.value)}
             label="Invoice No"
           />
-          {/* <TextField
-            style={{
-              marginLeft: "30%",
-              marginRight: "30%",
-              marginBottom: "4px",
-            }}
-            type="date"
-            value={invoiceDate}
-            onChange={(e) => handleChangeInvoiceDate(e.target.value)}
-          /> */}
-          {/* <DatePicker
-            style={{
-              marginLeft: "30%",
-              marginRight: "30%",
-              marginBottom: "4px",
-            }}
-            
-            selected={invoiceDate}
-            onChange={(date) => setInvoiceDate(date)}
-          /> */}
-          {/* <input
-            type="date"
-            style={{
-              marginLeft: "30%",
-              marginRight: "30%",
-              marginBottom: "4px",
-            }}
-            value={invoiceDate}
-            onChange={(date) => setInvoiceDate(date)}
-          /> */}
+
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               style={{
@@ -331,7 +338,7 @@ const InvoiceDetails = () => {
             />
           </MuiPickersUtilsProvider>
           <TextField
-            disabled={id ? true : false}
+            // disabled={id ? true : false}
             style={{
               marginLeft: "30%",
               marginRight: "30%",
@@ -343,12 +350,24 @@ const InvoiceDetails = () => {
             label="Part No"
           />
           <TextField
+            disabled={id ? true : false}
             style={{
               marginLeft: "30%",
               marginRight: "30%",
               marginBottom: "4px",
             }}
-            disabled={id ? true : false}
+            variant="standard"
+            value={slNo}
+            onChange={(e) => setSlNo(e.target.value)}
+            label="Sl No"
+          />
+          <TextField
+            style={{
+              marginLeft: "30%",
+              marginRight: "30%",
+              marginBottom: "4px",
+            }}
+            // disabled={id ? true : false}
             variant="standard"
             value={itemDescription}
             onChange={(e) => setItemDescription(e.target.value)}

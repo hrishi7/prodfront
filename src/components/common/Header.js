@@ -129,7 +129,7 @@ const Header = (props) => {
             render={() => (
               <Toolbar>
                 <img
-                  src="https://res.cloudinary.com/hrishi7/image/upload/v1586783076/medcareLogo.png"
+                  src="https://i.ibb.co/9W3zmzV/pdLogo.png"
                   alt="Medicare"
                   className={classes.logo}
                   onClick={() => (window.location.href = "/")}

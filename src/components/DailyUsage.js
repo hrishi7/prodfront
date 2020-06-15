@@ -93,31 +93,40 @@ const DailyUsage = () => {
   }, []);
 
   const handleInsertDailyUsage = async () => {
+    if (qty != "" && qpc != "" && +qty > +qpc) {
+      alert("Qpc cannot be less than qty");
+      return;
+    }
     if (allFieldsAreFilled("save")) {
-      let insertData = {
-        schedule,
-        coachNo,
-        coachType,
-        site,
-        startDate,
-        endDate,
-        dateOfInspection,
-        daysTakenForFtWork,
-        slNoAsPerLoa,
-        description,
-        partNo,
-        qty,
-        qpc,
-        location: location.trim(),
-        remarks,
-      };
-      /**set data */
-      setLoading(true);
-      let response = await axios.post(`${proxy}/api/daily-usage`, insertData);
-      setLoading(false);
-      alert("saved!");
-      setOpenForm(false);
-      dispatch(insertDailyUsage(response.data));
+      try {
+        let insertData = {
+          schedule,
+          coachNo,
+          coachType,
+          site,
+          startDate,
+          endDate,
+          dateOfInspection,
+          daysTakenForFtWork,
+          slNoAsPerLoa,
+          description,
+          partNo,
+          qty,
+          qpc,
+          location: location.trim(),
+          remarks,
+        };
+        /**set data */
+        setLoading(true);
+        let response = await axios.post(`${proxy}/api/daily-usage`, insertData);
+        setLoading(false);
+        alert("saved!");
+        setOpenForm(false);
+        dispatch(insertDailyUsage(response.data));
+      } catch (error) {
+        setLoading(false);
+        alert(error.response.data.message);
+      }
     } else {
       setLoading(false);
       alert("Please Fill All Field");
@@ -187,35 +196,40 @@ const DailyUsage = () => {
 
   const handleUpdateDailyUsage = async () => {
     if (allFieldsAreFilled("update")) {
-      let updateData = {
-        schedule,
-        coachNo,
-        coachType,
-        site,
-        startDate,
-        endDate,
-        dateOfInspection,
-        daysTakenForFtWork,
-        slNoAsPerLoa,
-        description,
-        partNo,
-        qty,
-        qpc,
-        location: location.trim(),
-        remarks,
-      };
-      /**set updated data */
-      setLoading(true);
-      let response = await axios.put(
-        `${proxy}/api/daily-usage/${id}`,
-        updateData
-      );
-      setLoading(false);
-      alert("Updated!");
-      setOpenForm(false);
+      try {
+        let updateData = {
+          schedule,
+          coachNo,
+          coachType,
+          site,
+          startDate,
+          endDate,
+          dateOfInspection,
+          daysTakenForFtWork,
+          slNoAsPerLoa,
+          description,
+          partNo,
+          qty,
+          qpc,
+          location: location.trim(),
+          remarks,
+        };
+        /**set updated data */
+        setLoading(true);
+        let response = await axios.put(
+          `${proxy}/api/daily-usage/${id}`,
+          updateData
+        );
+        setLoading(false);
+        alert("Updated!");
+        setOpenForm(false);
 
-      response = await axios.get(`${proxy}/api/daily-usage`);
-      dispatch(readDailyUsage(response.data));
+        response = await axios.get(`${proxy}/api/daily-usage`);
+        dispatch(readDailyUsage(response.data));
+      } catch (error) {
+        setLoading(false);
+        alert(error.response.data.message);
+      }
     } else {
       setLoading(false);
       alert("Please Fill All Field");
@@ -223,12 +237,17 @@ const DailyUsage = () => {
   };
 
   const handleDeleteDailyUsage = async (id) => {
-    setLoading(true);
-    await axios.delete(`${proxy}/api/daily-usage/${id}`);
-    setLoading(false);
-    alert("Deleted!");
-    setOpenForm(false);
-    dispatch(deleteDailyUsage(id));
+    try {
+      setLoading(true);
+      await axios.delete(`${proxy}/api/daily-usage/${id}`);
+      setLoading(false);
+      alert("Deleted!");
+      setOpenForm(false);
+      dispatch(deleteDailyUsage(id));
+    } catch (error) {
+      setLoading(false);
+      alert(error.response.data.message);
+    }
   };
 
   const renderColumns = () => {
@@ -297,6 +316,10 @@ const DailyUsage = () => {
     return {
       actionsColumnIndex: -1,
       pageSize: pageMAxSize,
+      searchFieldAlignment: "left",
+      searchFieldStyle: {
+        marginLeft: "50px",
+      },
     };
   };
 
@@ -355,7 +378,6 @@ const DailyUsage = () => {
 
   return (
     <Grid container direction="column">
-      {console.log("render")}
       <Grid
         style={{
           padding: "10px",
@@ -372,6 +394,7 @@ const DailyUsage = () => {
           Add Details
         </Button>
       </Grid>
+      {loading ? <Loader /> : ""}
       <Dialog
         fullWidth={true}
         maxWidth={"md"}
@@ -379,7 +402,6 @@ const DailyUsage = () => {
         aria-labelledby="simple-dialog-title"
         open={openForm}
       >
-        {loading ? <Loader /> : ""}
         <DialogTitle id="simple-dialog-title">
           <center>Add Daily Consumption Detail</center>
         </DialogTitle>

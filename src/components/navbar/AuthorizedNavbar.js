@@ -15,7 +15,12 @@ import {
 } from "@material-ui/core/";
 import { fade } from "@material-ui/core/styles";
 import { Provider } from "react-redux";
-import { IoIosLogIn, IoIosLogOut, IoIosPerson } from "react-icons/io";
+import {
+  IoIosLogIn,
+  IoIosLogOut,
+  IoIosPerson,
+  IoMdDocument,
+} from "react-icons/io";
 import { FaPlusCircle } from "react-icons/fa";
 import {
   FaMicrophone,
@@ -45,7 +50,7 @@ const AuthorizedNavbar = (props) => {
           color="primary"
           onClick={() => (window.location.href = "/daily-usage")}
         >
-          <IoIosLogIn />
+          <IoMdDocument />
         </IconButton>
       </Tooltip>
       <Tooltip title="Logout">
